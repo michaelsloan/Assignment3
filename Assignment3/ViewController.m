@@ -18,6 +18,9 @@
 
 - (void)viewDidLoad
 {
+    [_fillCart setTitle:@"Fill Cart" forState:UIControlStateNormal];
+    [_emptyCart setTitle:@"Empty Cart" forState:UIControlStateNormal];
+    [_selectAll setTitle:@"Select All" forState:UIControlStateNormal];
     _allSelected = NO;
     _cart = [[NSMutableArray alloc] initWithCapacity:0];
     
@@ -25,8 +28,9 @@
         Fruit *tempFruit = [[Fruit alloc] initWithWithName:@"Bananas" andColor:@"Yellow" andShape:@"Curvy"];
         tempFruit.url = @"http://en.m.wikipedia.org/wiki/Banana";
         [_cart addObject:tempFruit];
-        
     }
+    
+    //_cartView = [UITableView alloc] init
     
     self.title = @"Banana Bar";
     [super viewDidLoad];
@@ -48,12 +52,24 @@
 //Should remove all of the fruit in the cart.
 -(IBAction)removeAllFruitInCart:(id)sender
 {
+    _cart = [[NSMutableArray alloc] initWithCapacity:0];
     
+    [_cartView reloadData];
 }
 
 //should add 50 bananas to the cart and display them!
 -(IBAction)fillCartWithBananas:(id)sender
 {
+    _allSelected = NO;
+    _cart = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    for (int i=0; i<50; i++) {
+        Fruit *tempFruit = [[Fruit alloc] initWithWithName:@"Bananas" andColor:@"Yellow" andShape:@"Curvy"];
+        tempFruit.url = @"http://en.m.wikipedia.org/wiki/Banana";
+        [_cart addObject:tempFruit];
+    }
+    
+    [_cartView reloadData];
     
 }
 
@@ -83,7 +99,7 @@
 {
     UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"TableViewCell"];
     if (cell == Nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"TableViewCell"];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"TableViewCell"];
     }
     if([_cart count] == 0){
         cell.textLabel.text = @"No Fruit in Cart";
@@ -103,12 +119,21 @@
     }
     
     
-    
     return cell;
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    Fruit * tempFruit = [_cart objectAtIndex:indexPath.row];
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+
+    DetailViewController * tempView = [[DetailViewController alloc] initWithNibName:@"DetailViewController" bundle: nil];
+
+    tempView.url = tempFruit.url;
+
+    [self.navigationController pushViewController:tempView animated:YES];
+    
+    [tempView viewWillAppear:YES];
 }
 
 @end
